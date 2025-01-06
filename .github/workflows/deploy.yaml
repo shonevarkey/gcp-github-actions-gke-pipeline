@@ -37,6 +37,10 @@ jobs:
       with:
         cluster_name: ${{ vars.GKE_CLUSTER_NAME }}
         location: ${{ vars.GKE_CLUSTER_REGION }}
+    
+    - name: List files in the repository
+      run: |
+        ls -R
 
     - name: Update Image Tag in Kubernetes Manifest
       run: |
