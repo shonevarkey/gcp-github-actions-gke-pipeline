@@ -17,6 +17,13 @@ jobs:
         repository: shonevarkey/barista-app-docker
         ref: main
 
+    - name: Checkout code from gcp-github-actions-gke-pipeline repository
+      uses: actions/checkout@v3
+      with:
+        repository: shonevarkey/gcp-github-actions-gke-pipeline
+        ref: main
+        path: gcp-github-actions-gke-pipeline
+
     - name: Authenticate with GCP
       uses: google-github-actions/auth@v1
       with:
@@ -44,10 +51,10 @@ jobs:
 
     - name: Update Image Tag in Kubernetes Manifest
       run: |
-        sed -i "s|gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:latest|gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG|g" kubernetes-manifests/k8s-manifests.yaml
+        sed -i "s|gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:latest|gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG|g" gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
 
     - name: Deploy to GKE
       run: |
         echo "Deploying to GKE..."
-        kubectl apply -f kubernetes-manifests/k8s-manifests.yaml
+        kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
         kubectl rollout status deployment/coffee-shop
