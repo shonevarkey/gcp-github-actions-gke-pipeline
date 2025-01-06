@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: barista-coffee-app
-        image: gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG
+        image: gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
@@ -22,27 +22,27 @@ spec:
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
-              name: "projects/hypernova-439518/secrets/db-host/versions/latest"
+              name: "projects/${{ env.GCP_PROJECT_ID }}/secrets/db-host/versions/latest"
               key: host
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: "projects/hypernova-439518/secrets/db-user/versions/latest"
+              name: "projects/${{ env.GCP_PROJECT_ID }}/secrets/db-user/versions/latest"
               key: user
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: "projects/hypernova-439518/secrets/db-password/versions/latest"
+              name: "projects/${{ env.GCP_PROJECT_ID }}/secrets/db-password/versions/latest"
               key: password
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
-              name: "projects/hypernova-439518/secrets/db-name/versions/latest"
+              name: "projects/${{ env.GCP_PROJECT_ID }}/secrets/db-name/versions/latest"
               key: name
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: "projects/hypernova-439518/secrets/secret-key/versions/latest"
+              name: "projects/${{ env.GCP_PROJECT_ID }}/secrets/secret-key/versions/latest"
               key: secret
 ---
 apiVersion: v1

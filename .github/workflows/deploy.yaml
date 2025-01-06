@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+
 jobs:
   build-and-deploy:
     name: Build and Deploy to GKE
@@ -35,20 +38,25 @@ jobs:
     - name: Build and Push Docker Image with Commit Hash Tagging
       run: |
         IMAGE_TAG=$(echo $GITHUB_SHA | cut -c1-7)
-        docker build -t gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG .
-        docker push gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG
+        docker build -t gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG .
+        docker push gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
     - name: Configure kubectl
       uses: google-github-actions/get-gke-credentials@v1
       with:
-        cluster_name: ${{ vars.GKE_CLUSTER_NAME }}
-        location: ${{ vars.GKE_CLUSTER_REGION }}
+        cluster_name: ${{ secrets.GKE_CLUSTER_NAME }}
+        location: ${{ secrets.GKE_CLUSTER_REGION }}
     
     - name: Update Image Tag in Kubernetes Manifest
       run: |
-        sed -i "s|gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:latest|gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-        
+        sed -i "s|gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:latest|gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+        sed -i "s|projects/\${{ env.GCP_PROJECT_ID }}/secrets/db-host/versions/latest|projects/${{ env.GCP_PROJECT_ID }}/secrets/db-host/versions/latest|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+        sed -i "s|projects/\${{ env.GCP_PROJECT_ID }}/secrets/db-user/versions/latest|projects/${{ env.GCP_PROJECT_ID }}/secrets/db-user/versions/latest|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+        sed -i "s|projects/\${{ env.GCP_PROJECT_ID }}/secrets/db-password/versions/latest|projects/${{ env.GCP_PROJECT_ID }}/secrets/db-password/versions/latest|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+        sed -i "s|projects/\${{ env.GCP_PROJECT_ID }}/secrets/db-name/versions/latest|projects/${{ env.GCP_PROJECT_ID }}/secrets/db-name/versions/latest|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+        sed -i "s|projects/\${{ env.GCP_PROJECT_ID }}/secrets/secret-key/versions/latest|projects/${{ env.GCP_PROJECT_ID }}/secrets/secret-key/versions/latest|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+
     - name: Deploy to GKE
       run: |
         echo "Deploying to GKE..."
