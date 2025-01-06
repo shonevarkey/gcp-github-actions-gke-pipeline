@@ -48,13 +48,7 @@ jobs:
     - name: Update Image Tag in Kubernetes Manifest
       run: |
         sed -i "s|gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:latest|gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-        sed -i "s|projects/\${{ vars.GCP_PROJECT_ID }}|projects/${{ vars.GCP_PROJECT_ID }}|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-  
-    - name: Verify Updated Kubernetes Manifest
-      run: |
-        cat ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-
-
+        
     - name: Deploy to GKE
       run: |
         echo "Deploying to GKE..."
