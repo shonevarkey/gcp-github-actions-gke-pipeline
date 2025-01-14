@@ -58,8 +58,10 @@ jobs:
     
     - name: Update Image Tag in Kubernetes Manifest
       run: |
-        sed -i "s|gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:latest|gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-
+        IMAGE_TAG=$(echo $GITHUB_SHA | cut -c1-7)
+        LOWERCASE_IMAGE_TAG="gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG"
+        sed -i "s|gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:latest|$LOWERCASE_IMAGE_TAG|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+    
     - name: Deploy to GKE
       run: |
         echo "Deploying to GKE..."
