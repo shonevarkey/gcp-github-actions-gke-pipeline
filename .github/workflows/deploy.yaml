@@ -39,7 +39,7 @@ jobs:
 
     - name: Authenticate Docker with Google Container Registry
       run: |
-        echo "${{ secrets.WIF_CRED_CONFIG }}" | gcloud auth activate-service-account --key-file=-
+        echo "GCP Project ID : ${{ secrets.GCP_PROJECT_ID }}"
         gcloud auth configure-docker gcr.io
 
     - name: Build and Push Docker Image with Commit Hash Tagging
