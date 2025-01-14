@@ -37,12 +37,9 @@ jobs:
         workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_ID }}/locations/global/workloadIdentityPools/my-pool/providers/github-provider"
         service_account: "github-actions-sa@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
 
-    - name: Save Workload Identity Federation credentials
-      run: echo "${{ secrets.WIF_CRED_CONFIG }}" > wif-cred-config.json
-
     - name: Authenticate Docker with Google Container Registry
       run: |
-        gcloud auth activate-service-account --key-file=wif-cred-config.json
+        echo "${{ secrets.WIF_CRED_CONFIG }}" | gcloud auth activate-service-account --key-file=-
         gcloud auth configure-docker gcr.io
 
     - name: Build and Push Docker Image with Commit Hash Tagging
