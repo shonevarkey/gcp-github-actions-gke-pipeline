@@ -41,6 +41,7 @@ jobs:
       run: |
         # echo "GCP Project ID : ${{ secrets.GCP_PROJECT_ID }}"
         gcloud auth configure-docker gcr.io
+        gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
 
     - name: Build and Push Docker Image with Commit Hash Tagging
       run: |
