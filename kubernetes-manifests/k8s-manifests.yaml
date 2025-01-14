@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: barista-coffee-app
-        image: gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG
+        image: gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
@@ -22,27 +22,27 @@ spec:
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
-              name: "projects/${{ env.GCP_PROJECT_ID }}/secrets/db-host/versions/latest"
+              name: db-host-k8s-secret
               key: host
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: "projects/${{ env.GCP_PROJECT_ID }}/secrets/db-user/versions/latest"
+              name: db-user-k8s-secret
               key: user
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: "projects/${{ env.GCP_PROJECT_ID }}/secrets/db-password/versions/latest"
+              name: db-password-k8s-secret
               key: password
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
-              name: "projects/${{ env.GCP_PROJECT_ID }}/secrets/db-name/versions/latest"
+              name: db-name-k8s-secret
               key: name
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: "projects/${{ env.GCP_PROJECT_ID }}/secrets/secret-key/versions/latest"
+              name: secret-key-k8s-secret
               key: secret
 ---
 apiVersion: v1
@@ -54,6 +54,6 @@ spec:
   selector:
     app: coffee-shop
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 5000
+    - protocol: TCP
+      port: 80
+      targetPort: 5000

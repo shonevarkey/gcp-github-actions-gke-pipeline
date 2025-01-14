@@ -27,10 +27,11 @@ jobs:
         ref: main
         path: gcp-github-actions-gke-pipeline
 
-    - name: Authenticate with GCP
+    - name: Authenticate with GCP using using Workload Identity Federation
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_ID }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+        service_account: "github-actions-sa@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
 
     - name: Authenticate Docker with Google Container Registry
       run: gcloud auth configure-docker gcr.io
@@ -51,14 +52,10 @@ jobs:
     - name: Update Image Tag in Kubernetes Manifest
       run: |
         sed -i "s|gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:latest|gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-        sed -i "s|projects/\${{ env.GCP_PROJECT_ID }}/secrets/db-host/versions/latest|projects/${{ env.GCP_PROJECT_ID }}/secrets/db-host/versions/latest|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-        sed -i "s|projects/\${{ env.GCP_PROJECT_ID }}/secrets/db-user/versions/latest|projects/${{ env.GCP_PROJECT_ID }}/secrets/db-user/versions/latest|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-        sed -i "s|projects/\${{ env.GCP_PROJECT_ID }}/secrets/db-password/versions/latest|projects/${{ env.GCP_PROJECT_ID }}/secrets/db-password/versions/latest|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-        sed -i "s|projects/\${{ env.GCP_PROJECT_ID }}/secrets/db-name/versions/latest|projects/${{ env.GCP_PROJECT_ID }}/secrets/db-name/versions/latest|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-        sed -i "s|projects/\${{ env.GCP_PROJECT_ID }}/secrets/secret-key/versions/latest|projects/${{ env.GCP_PROJECT_ID }}/secrets/secret-key/versions/latest|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
 
     - name: Deploy to GKE
       run: |
         echo "Deploying to GKE..."
         kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+        kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/external-secrets.yaml
         kubectl rollout status deployment/coffee-shop
