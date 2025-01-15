@@ -63,13 +63,13 @@ jobs:
       run: |
         cat ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
         echo "######## Secret Variables ##########"
-        echo "GCP Project ID : ${{ secrets.GCP_PROJECT_ID }}" | cat -
-        echo "GKE_CLUSTER_NAME : ${{ secrets.GKE_CLUSTER_NAME }}" | cat -
-        echo "GKE_CLUSTER_REGION : ${{ secrets.GKE_CLUSTER_REGION }}" | cat -
+        echo "GCP Project ID = ${{ secrets.GCP_PROJECT_ID }}" | cat -
+        echo "GKE_CLUSTER_NAME = ${{ secrets.GKE_CLUSTER_NAME }}" | cat -
+        echo "GKE_CLUSTER_REGION = ${{ secrets.GKE_CLUSTER_REGION }}" | cat -
         echo "######## Environment Variables ##########"
-        echo "GCP Project ID : ${{ vars.GCP_PROJECT_ID }}" | cat -
-        echo "GKE_CLUSTER_NAME : ${{ vars.GKE_CLUSTER_NAME }}" | cat -
-        echo "GKE_CLUSTER_REGION : ${{ vars.GKE_CLUSTER_REGION }}" | cat -
+        echo "GCP Project ID = ${{ vars.GCP_PROJECT_ID }}" | cat -
+        echo "GKE_CLUSTER_NAME = ${{ vars.GKE_CLUSTER_NAME }}" | cat -
+        echo "GKE_CLUSTER_REGION = ${{ vars.GKE_CLUSTER_REGION }}" | cat -
 
     
     #- name: Deploy to GKE
