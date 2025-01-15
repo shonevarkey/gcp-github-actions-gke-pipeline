@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: barista-coffee-app
-        image: gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:latest
+        image: gcr.io/hypernova-439518/coffee-shop:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000

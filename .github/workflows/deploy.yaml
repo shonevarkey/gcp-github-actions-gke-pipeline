@@ -54,14 +54,9 @@ jobs:
       with:
         cluster_name: ${{ vars.GKE_CLUSTER_NAME }}
         location: ${{ vars.GKE_CLUSTER_REGION }}
-    
-    - name: Update Image Tag in Kubernetes Manifest
-      run: |
-        sed -i "s|gcr.io/${GCP_PROJECT_ID}/coffee-shop:latest|gcr.io/${GCP_PROJECT_ID}/coffee-shop:$IMAGE_TAG|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
 
-    - name: Check Updated Kubernetes Manifest
+    - name: Echo values
       run: |
-        cat ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
         echo "######## Secret Variables ##########"
         echo "GCP Project ID = ${{ secrets.GCP_PROJECT_ID }}" > project.yaml | cat project.yaml
         echo "GKE_CLUSTER_NAME = ${{ secrets.GKE_CLUSTER_NAME }}" > name.yaml | cat name.yaml
@@ -71,10 +66,19 @@ jobs:
         echo "GKE_CLUSTER_NAME = ${{ vars.GKE_CLUSTER_NAME }}" > vname.yaml| cat vname.yaml
         echo "GKE_CLUSTER_REGION = ${{ vars.GKE_CLUSTER_REGION }}" > vregion.yaml| cat vregion.yaml
 
+    - name: Update Image Tag in Kubernetes Manifest
+      run: |
+        sed -i "s|gcr.io/${GCP_PROJECT_ID}/coffee-shop:latest|gcr.io/${GCP_PROJECT_ID}/coffee-shop:$IMAGE_TAG|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+
+    - name: Check Updated Kubernetes Manifest
+      run: |
+        cat ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+      
+
     
-    #- name: Deploy to GKE
-    #  run: |
-    #    echo "Deploying to GKE..."
-    #    kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-    #    kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/external-secrets.yaml
-    #    kubectl rollout status deployment/coffee-shop
+    - name: Deploy to GKE
+      run: |
+        echo "Deploying to GKE..."
+        kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+        kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/external-secrets.yaml
+        kubectl rollout status deployment/coffee-shop
