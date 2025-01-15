@@ -61,10 +61,23 @@ jobs:
         IMAGE_TAG=$(echo $GITHUB_SHA | cut -c1-7)
         LOWERCASE_IMAGE_TAG="gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG"
         sed -i "s|gcr.io/${{ env.GCP_PROJECT_ID }}/coffee-shop:latest|$LOWERCASE_IMAGE_TAG|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-    
-    - name: Deploy to GKE
+
+    - name: Check Updated Kubernetes Manifest
       run: |
-        echo "Deploying to GKE..."
-        kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-        kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/external-secrets.yaml
-        kubectl rollout status deployment/coffee-shop
+        cat ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+        echo "######## Secret Variables ##########"
+        echo "GCP Project ID : ${{ secrets.GCP_PROJECT_ID }}"
+        echo "GKE_CLUSTER_NAME : ${{ secrets.GKE_CLUSTER_NAME }}"
+        echo "GKE_CLUSTER_REGION : ${{ secrets.GKE_CLUSTER_REGION }}"
+        echo "######## Environment Variables ##########"
+        echo "GCP Project ID : ${{ vars.GCP_PROJECT_ID }}"
+        echo "GKE_CLUSTER_NAME : ${{ vars.GKE_CLUSTER_NAME }}"
+        echo "GKE_CLUSTER_REGION : ${{ vars.GKE_CLUSTER_REGION }}"
+
+    
+    #- name: Deploy to GKE
+    #  run: |
+    #    echo "Deploying to GKE..."
+    #    kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+    #    kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/external-secrets.yaml
+    #    kubectl rollout status deployment/coffee-shop
