@@ -9,7 +9,6 @@ permissions:
   id-token: write  # Required for Workload Identity Federation
   contents: read    # Required for actions/checkout
 
-
 jobs:
   build-and-deploy:
     name: Build and Deploy to GKE
@@ -62,7 +61,6 @@ jobs:
         cluster_name: ${{ vars.GKE_CLUSTER_NAME }}
         location: ${{ vars.GKE_CLUSTER_REGION }}
 
-
     - name: Update Image Tag in Kubernetes Manifest
       run: |
         sed -i "s|gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:COMMIT_TAG|gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG|g" ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
@@ -71,8 +69,6 @@ jobs:
       run: |
         cat ./gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
       
-
-    
     - name: Deploy to GKE
       run: |
         echo "Deploying to GKE..."
