@@ -18,7 +18,13 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
-        
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 3000
+          fsGroup: 2000
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+
               
         env:
         - name: DB_HOST
