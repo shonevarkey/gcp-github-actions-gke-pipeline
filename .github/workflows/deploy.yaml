@@ -46,6 +46,15 @@ jobs:
         docker build -t gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG .
         docker push gcr.io/${{ vars.GCP_PROJECT_ID }}/coffee-shop:$IMAGE_TAG
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+        echo "Recording successful build: $IMAGE_TAG"
+        echo "$IMAGE_TAG" > previous_image_tag.txt
+        cat previous_image_tag.txt
+
+    - name: Save Image Tag for Rollback
+      uses: actions/upload-artifact@v3
+      with:
+        name: previous-image-tag
+        path: previous_image_tag.txt
 
     - name: Configure kubectl
       uses: google-github-actions/get-gke-credentials@v1
@@ -70,3 +79,10 @@ jobs:
         kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
         kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/external-secrets.yaml
         kubectl rollout status deployment/coffee-shop
+
+    - name: Rollback on Failure
+      if: failure()
+      run: |
+        echo "Rolling back to the previous version..."
+        kubectl rollout undo deployment coffee-shop
+        echo "Rollback complete!"
