@@ -12,6 +12,8 @@ spec:
       labels:
         app: coffee-shop
     spec:
+      securityContext:
+        fsGroup: 2000
       containers:
       - name: barista-coffee-app
         image: gcr.io/hypernova-439518/coffee-shop:COMMIT_TAG
@@ -21,7 +23,6 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 3000
-          fsGroup: 2000
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
 
