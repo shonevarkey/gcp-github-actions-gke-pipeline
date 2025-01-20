@@ -72,8 +72,8 @@ jobs:
     - name: Deploy to GKE
       run: |
         echo "Deploying to GKE..."
-        kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
-        kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/external-secrets.yaml
+        kubectl delete -f gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
+        kubectl delete -f gcp-github-actions-gke-pipeline/kubernetes-manifests/external-secrets.yaml
         kubectl rollout status deployment/coffee-shop
 
     - name: Rollback on Failure
