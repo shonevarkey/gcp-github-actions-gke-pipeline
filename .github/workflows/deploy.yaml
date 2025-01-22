@@ -74,14 +74,14 @@ jobs:
         echo "Deploying to GKE..."
         kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/k8s-manifests.yaml
         kubectl apply -f gcp-github-actions-gke-pipeline/kubernetes-manifests/external-secrets.yaml
-        kubectl rollout status deployment/coffee-shop
+        kubectl rollout status deployment/coffee-shop -n dev
 
     - name: Rollback on Failure
       if: failure()
       run: |
         if kubectl get deployment coffee-shop; then
           echo "Rolling back to the previous version..."
-          kubectl rollout undo deployment coffee-shop
+          kubectl rollout undo deployment coffee-shop -n dev
           echo "Rollback complete!"
         else
           echo "Deployment not found. Skipping rollback."
